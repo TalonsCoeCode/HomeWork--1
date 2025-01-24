@@ -1,0 +1,28 @@
+def one_bit_addition(bit1, bit2, carry):
+    sum_bit = (bit1 ^ bit2) ^ carry
+    carry_out = (bit1 & bit2) | (carry & (bit1 ^ bit2))
+    return sum_bit, carry_out
+
+def n_bit_addition(binNum1, binNum2):
+    if not (isinstance(binNum1, str) and isinstance(binNum2, str)):
+        raise TypeError("Not a String")
+    if not (binNum1.startswith('0b') and binNum2.startswith('0b')):
+        raise TypeError("'0b' prefix Not Found, Try Again")
+    if len(binNum1) != len(binNum2):
+        raise ValueError("Make them the same size because they are not, Try Again But Better This Time")
+    if not all(c in '01' for c in binNum1[2:]) or not all(c in '01' for c in binNum2[2:]):
+        raise TypeError("Inputs must be valid binary numbers, like 1 and 0 man")
+
+    result = ''
+    carry = 0
+
+    for i in range(len(binNum1) - 1, 1, -1):
+        bit1 = int(binNum1[i])
+        bit2 = int(binNum2[i])
+        sum_bit, carry = one_bit_addition(bit1, bit2, carry)
+        result = str(sum_bit) + result
+
+    if carry:
+        result = '1' + result
+
+    return '0b' + result
