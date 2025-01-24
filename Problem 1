@@ -34,5 +34,3 @@ def signedInt(binNum):
         num -= (1 << num_bits)
 
     return num
-print(signedInt('0b1101'))  
-print(signedInt('0b0101'))  
