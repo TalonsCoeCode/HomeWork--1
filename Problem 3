@@ -1,0 +1,63 @@
+def float2bin(num):
+    # Case that are special - Works
+    if num == 0:
+        return '00000000'
+    if num == float('inf'):
+        return '01111111'
+    if num == float('-inf'):
+        return '11111111'
+    if num != num:
+        return '01111110'
+
+    # + or - | Works
+    sign = 0 if num >= 0 else 1
+    num = abs(num)
+
+    # Number Split - Works but barely
+    whole_part = int(num)
+    frac_part = num - whole_part
+
+    whole_bin = bin(whole_part)[2:]
+
+  #rep of fractal parts - Works 
+    frac_bin = ""
+    while frac_part > 0 and len(frac_bin) < 4:
+        frac_part *= 2
+        bit = int(frac_part)
+        frac_bin += str(bit)
+        frac_part -= bit
+
+    num_bin = whole_bin + '.' + frac_bin
+
+    point_index = num_bin.index('.')
+    exponent = len(whole_bin) - 1
+
+    mantissa_bin = num_bin[point_index + 1:point_index + 5]
+
+    biased_exponent = exponent + 3  # Bias is 3
+
+    if biased_exponent > 7:
+        raise ValueError("Number is too large to be represented.")
+
+    return f"{sign}{format(biased_exponent, '03b')}{mantissa_bin.ljust(4, '0')}"
+
+ # Youtube clutch ??
+def bin2float(binNum):
+    sign = int(binNum[0])
+    exponent = int(binNum[1:4], 2)
+    mantissa = binNum[4:]
+
+    if exponent == 7:
+        if mantissa == '0000':
+            return float('inf') if sign == 0 else float('-inf')
+        else:
+            return float('nan')
+
+    exponent -= 3
+
+    mantissa_value = 0
+    for i in range(len(mantissa)):
+        mantissa_value += int(mantissa[i]) * (2 ** -(i + 1))
+
+    return (-1) ** sign * (1 + mantissa_value) * (2 ** exponent)
+
